@@ -45,7 +45,7 @@ int main(){
 	}
 
 	i = 0;
-	while(fgets(atual, MAXWRD, arq) != NULL){
+	while(fgets(atual, MAXWRD, arq)){
 		atual[strcspn(atual, "\n")] = 0;
 		strcpy(dicionario[i],atual);
 		i++;
