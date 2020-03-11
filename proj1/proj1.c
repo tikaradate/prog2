@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 #define ALOC 100000
 #define MAXWRD 100
 
@@ -27,9 +28,10 @@ int busca_bin(char *chave, char **array, int elem){
 
 int main(){
 	int i, j, quant, achou;
-	char **dicionario, atual[MAXWRD], *palavra;
+	char **dicionario, atual[MAXWRD], c, *locale;
 	FILE *arq;
 
+	locale = setlocale (LC_CTYPE, "pt_BR.ISO-8859-1") ;
 // alocacao inicial do dicionario
 	arq = fopen("brazilian", "r");
 	if(!arq){
@@ -59,11 +61,13 @@ int main(){
 	}
 	fclose(arq);
 // fim alocacao dicionario
+
 	
-	printf("%d\n", i);
-	palavra = "arroz";
-	achou = busca_bin(palavra, dicionario, i);
-	if(achou){
-		printf("urra\n");
+	while(fgets(atual, 3000, stdin)){
+		printf("%s\n", atual);	
+		achou = busca_bin(atual, dicionario, i);
+		if(!achou){
+			//desloca
+		}
 	}
 }
