@@ -3,7 +3,7 @@
 
 int main(){
 	FILE *arq;
-	int larg, alt, i, j;
+	int larg, alt, i, j, a;
 	char mapa[50][50], c;
 
 	arq = fopen("mapa.txt", "r");
@@ -11,12 +11,13 @@ int main(){
 	
 	i = 0;
 	j = 0;
+	a = 0;
 	while((c = fgetc(arq)) != EOF){
 		if(j == larg){
-			j = 0;
 			i++;
 		}
-		mapa[i][j++] = c;
+		mapa[i][j%23] = c;
+		j++;
 	}
 	for(i = 0; i < alt; i++){
 		for(j = 0; j < larg; j++){
