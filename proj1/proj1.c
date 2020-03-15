@@ -7,6 +7,10 @@
 #define ALOC 100000
 #define MAXWRD 100
 
+int stringCmp(const void *a, const void *b) { 
+	return strcasecmp(*(char **)a, *(char **)b);
+}
+
 int busca_bin(char *chave, char **array, int elem){
 	if(strlen(chave) == 0)
 		return 1;
@@ -20,9 +24,9 @@ int busca_bin(char *chave, char **array, int elem){
 		if(teste == 0){
 			return 1;
 		} else if(teste > 0) {
-			ini = meio+1;
+			ini = meio + 1;
 		} else {
-			fim = meio-1;
+			fim = meio - 1;
 		}
 		meio = (ini + fim)/2;
 	}
@@ -34,7 +38,7 @@ int main(){
 	char **dicionario, atual[MAXWRD];
 	FILE *arq;
 
-	setlocale (LC_CTYPE, "pt_BR.ISO-8859-1") ;
+	setlocale (LC_ALL, "pt_BR.ISO-8859-1");
 // alocacao inicial do dicionario
 	arq = fopen("brazilian", "r");
 	if(!arq){
@@ -65,6 +69,8 @@ int main(){
 	fclose(arq);
 // fim alocacao dicionario
 
+	qsort(dicionario, i, sizeof(char *), stringCmp);
+	
 	j = 0;
 	while((c = getchar())!= EOF){
 		if(isalpha(c)){
@@ -81,4 +87,8 @@ int main(){
 			j = 0;
 		}
 	}
+	for(i = 0; i < quant; i++){
+		free(dicionario[i]);
+	}
+	free(dicionario);
 }

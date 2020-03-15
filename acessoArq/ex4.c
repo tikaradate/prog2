@@ -7,20 +7,19 @@ int main(){
 	char mapa[50][50], c;
 
 	arq = fopen("mapa.txt", "r");
-	fscanf(arq, "%d %d\n", &larg, &alt);
+	fscanf(arq, "%d %d\n", &alt, &larg);
 	
 	i = 0;
 	j = 0;
-	a = 0;
-	while((c = fgetc(arq)) != EOF){
-		if(j == larg){
-			i++;
-		}
-		mapa[i][j%23] = c;
-		j++;
-	}
+	
 	for(i = 0; i < alt; i++){
-		for(j = 0; j < larg; j++){
+		for(j = 0; j <= larg; j++){
+			mapa[i][j] = fgetc(arq);
+		}
+	}
+	
+	for(i = 0; i < alt; i++){
+		for(j = 0; j <= larg; j++){
 			printf("%c", mapa[i][j]);
 		}
 	}
