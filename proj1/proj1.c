@@ -48,11 +48,6 @@ int main(){
 
 	quant = ALOC;
 	dicionario = malloc(quant * sizeof(char *));
-
-	for(i = 0; i < quant; i++){
-		dicionario[i] = malloc(MAXWRD * sizeof(char));
-	}
-
 	i = 0;
 	while(fgets(atual, MAXWRD, arq)){
 		atual[strcspn(atual, "\n")] = 0;
@@ -61,8 +56,6 @@ int main(){
 		if(i == quant){
 			quant += ALOC;
 			dicionario = realloc(dicionario, quant * sizeof(char *));
-			for(j = i; j < quant; j++){
-				dicionario[j] = malloc(MAXWRD * sizeof(char));
 			}
 		}
 	}
