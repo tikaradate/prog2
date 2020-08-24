@@ -7,7 +7,7 @@
 #define ALOC 10000
 #define MAXWRD 100
 
-int stringCmp(const void *a, const void *b) {
+int string_cmp(const void *a, const void *b) {
 	//para acessar cada palavra precisamos de char**
 	//e o qsort nos dá um ponteiro para o elemento
 	return strcasecmp(*(char **)a, *(char **)b);
@@ -43,15 +43,16 @@ int main(){
 	setlocale (LC_ALL, "pt_BR.ISO-8859-1");
 	
 	// alocacao inicial do dicionario
-	arq = fopen("/usr/share/dict/brazilian", "r";
+	arq = fopen("/usr/share/dict/brazilian", "r");
 	if(!arq){
-	    printf("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado\n");
-	    arq = fopen("brazilian", "r");
-	    if(!arq = fopen("brazilian", "r"){
-	    	printf("Erro ao abrir brazilian, encerrando o programa\n");
-	    	exit(1);
-	    }
+		printf("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado\n");
+		arq = fopen("brazilian", "r");
+		if(!arq){
+			printf("Erro ao abrir brazilian, encerrando o programa\n");
+			exit(1);
+	    	}
 	}
+	// alocacao inicial do dicionario
 	// quantidade comeca com um valor predefinido 
 	quantidade = ALOC;
 	dicionario = malloc(quantidade * sizeof(char *));
@@ -63,14 +64,13 @@ int main(){
 		// se i chega ao mesmo valor da quantidade máxima, ela é aumentada num valor constante
 		if(i == quantidade){
 			quantidade += ALOC;
-			dicionario = realloc(dicionario, quantidade * sizeof(char *));
-			}
+			dicionario = realloc(dicionario, quantidade * sizeof(char *));	
 		}
 	}
 	fclose(arq);
 	// fim alocacao dicionario
 
-	qsort(dicionario, i, sizeof(char *), stringCmp);
+	qsort(dicionario, i, sizeof(char *), string_cmp);
 	
 	j = 0;
 	while((c = getchar())!= EOF){
@@ -90,7 +90,7 @@ int main(){
 			j = 0;
 		}
 	}
-	for(i = 0; i < quant; i++){
+	for(i = 0; i < quantidade; i++){
 		free(dicionario[i]);
 	}
 	free(dicionario);
