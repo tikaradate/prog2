@@ -4,7 +4,7 @@
 #include <strings.h>
 #include <locale.h>
 #include <ctype.h>
-#define ALOC 10000
+#define ALOC 100000
 #define MAXWRD 100
 
 int string_cmp(const void *a, const void *b) {
@@ -45,10 +45,10 @@ int main(){
 	// alocacao inicial do dicionario
 	arq = fopen("/usr/share/dict/brazilian", "r");
 	if(!arq){
-		printf("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado\n");
+		perror("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado");
 		arq = fopen("brazilian", "r");
 		if(!arq){
-			printf("Erro ao abrir brazilian, encerrando o programa\n");
+			perror("Erro ao abrir brazilian, encerrando o programa\n");
 			exit(1);
 	    	}
 	}
@@ -56,6 +56,11 @@ int main(){
 	// quantidade comeca com um valor predefinido 
 	quantidade = ALOC;
 	dicionario = malloc(quantidade * sizeof(char *));
+	
+	for(i = 0; i < quantidade; i++){
+		dicionario[i] = malloc(MAXWRD * sizeof(char));		
+	}
+	
 	i = 0;
 	while(fgets(atual, MAXWRD, arq)){
 		atual[strcspn(atual, "\n")] = 0;
@@ -64,7 +69,10 @@ int main(){
 		// se i chega ao mesmo valor da quantidade máxima, ela é aumentada num valor constante
 		if(i == quantidade){
 			quantidade += ALOC;
-			dicionario = realloc(dicionario, quantidade * sizeof(char *));	
+			dicionario = realloc(dicionario, quantidade * sizeof(char *));
+			for(j = i; j < quantidade; j++){
+				dicionario[j] = malloc(MAXWRD * sizeof(char));	
+			}
 		}
 	}
 	fclose(arq);
