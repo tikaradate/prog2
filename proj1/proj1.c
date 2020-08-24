@@ -4,10 +4,12 @@
 #include <strings.h>
 #include <locale.h>
 #include <ctype.h>
-#define ALOC 100000
+#define ALOC 10000
 #define MAXWRD 100
 
-int stringCmp(const void *a, const void *b) { 
+int stringCmp(const void *a, const void *b) {
+	//para acessar cada palavra precisamos de char**
+	//e o qsort nos dá um ponteiro para o elemento
 	return strcasecmp(*(char **)a, *(char **)b);
 }
 
@@ -34,41 +36,49 @@ int busca_bin(char *chave, char **array, int elem){
 }
 
 int main(){
-	int i, j, quant, c;
+	int i, j, quantidade, c;
 	char **dicionario, atual[MAXWRD];
 	FILE *arq;
 
 	setlocale (LC_ALL, "pt_BR.ISO-8859-1");
-// alocacao inicial do dicionario
-	arq = fopen("brazilian", "r");
+	
+	// alocacao inicial do dicionario
+	arq = fopen("/usr/share/dict/brazilian", "r";
 	if(!arq){
-		printf("Erro ao abrir brazilian\n");
-		exit(1);
+	    printf("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado\n");
+	    arq = fopen("brazilian", "r");
+	    if(!arq = fopen("brazilian", "r"){
+	    	printf("Erro ao abrir brazilian, encerrando o programa\n");
+	    	exit(1);
+	    }
 	}
-
-	quant = ALOC;
-	dicionario = malloc(quant * sizeof(char *));
+	// quantidade comeca com um valor predefinido 
+	quantidade = ALOC;
+	dicionario = malloc(quantidade * sizeof(char *));
 	i = 0;
 	while(fgets(atual, MAXWRD, arq)){
 		atual[strcspn(atual, "\n")] = 0;
 		strcpy(dicionario[i], atual);
 		i++;
-		if(i == quant){
-			quant += ALOC;
-			dicionario = realloc(dicionario, quant * sizeof(char *));
+		// se i chega ao mesmo valor da quantidade máxima, ela é aumentada num valor constante
+		if(i == quantidade){
+			quantidade += ALOC;
+			dicionario = realloc(dicionario, quantidade * sizeof(char *));
 			}
 		}
 	}
 	fclose(arq);
-// fim alocacao dicionario
+	// fim alocacao dicionario
 
 	qsort(dicionario, i, sizeof(char *), stringCmp);
 	
 	j = 0;
 	while((c = getchar())!= EOF){
+		//se o caracter atual for pertencente ao alfabeto, botar na palavra
 		if(isalpha(c)){
 			atual[j] = c;
 			j++;
+		//se não, finalizar a palavra atual e procurá-la no dicionario
 		} else {
 			atual[j] = '\0';
 			if(!busca_bin(atual, dicionario, i)){
