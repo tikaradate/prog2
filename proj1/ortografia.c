@@ -28,29 +28,7 @@ int main(){
 
 	tam = tam_dicionario(&dicionario);
 	sort_dicionario(tam, &dicionario);
-	j = 0;
-	while((c = getchar())!= EOF){
-		//se o caracter atual for pertencente ao alfabeto, botar na palavra
-		if(isalpha(c)){
-			atual[j] = c;
-			j++;
-		//se não, finalizar a palavra atual e procurá-la no dicionario
-		} else {
-			atual[j] = '\0';
-			if(!busca_bin(atual, dicionario, i)){
-				printf("[%s]", atual);
-			} else {
-				printf("%s", atual);
-			}
-			printf("%c", c);
-			j = 0;
-		}
-	}
-
 	checa_texto(&dicionario);
-	free_dicionario(tam, &dicionario);
-	for(i = 0; i < quantidade; i++){
-		free(dicionario[i]);
-	}
-	free(dicionario);
+	libera_dicionario(&dicionario);
+	return 0;
 }

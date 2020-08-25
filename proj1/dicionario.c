@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "dicionario.h"
 
 static int string_cmp(const void *a, const void *b) {
@@ -68,4 +69,36 @@ int tam_dicionario(char ***dicionario){
 
 void sort_dicionario(int tam, char ***dicionario){
 	qsort(dicionario, tam, sizeof(char *), string_cmp);
+}
+
+void checa_texto(char ***dicionario){
+	int i;
+	char c, atual[MAXWRD];
+
+	i = 0;
+	while((c = getchar()) != EOF){
+		if(isalpha(c)){
+			atual[i] = c;
+			i++;
+		} else {
+			atual[i] = '\0';
+			if(!busca_bin(atual, *dicionario, i)){
+				printf("[%s]", atual);
+			} else {
+				printf("%s", atual);
+			}
+			printf("%c", c);
+			i = 0;
+		}
+	}
+}
+
+void libera_dicionario(char ***dicionario){
+	int tam, i;
+
+	tam = tam_dicionario(dicionario);
+	for(i = 0; i < tam; i++){
+		free(dicionario[i]);
+	}
+	free(dicionario);
 }
