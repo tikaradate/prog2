@@ -32,73 +32,72 @@ static int busca_bin(char *chave, char **array, int elem){
 	return 0;
 }
 
-char ** aloca_dicionario(FILE *arq){
+struct dicionario* aloca_dicionario(FILE *arq){
 	int i, j, quantidade;
-	char **dicionario, atual[MAXWRD];
-	
+	char atual[MAXWRD];
+	struct dicionario *dicionario;
+
+	dicionario = malloc(sizeof(struct dicionario));
+	//primeira alocacao
 	quantidade = BUFFER;
-	dicionario = malloc(quantidade * sizeof(char*));
+	dicionario->array = malloc(quantidade * sizeof(char*));
 	for(i = 0; i < quantidade; i++){
-		dicionario[i] = malloc(MAXWRD * sizeof(char));
+		dicionario->array[i] = malloc(MAXWRD * sizeof(char));
 	}
 
 	i = 0;
 	while(fgets(atual, MAXWRD, arq)){
 		atual[strcspn(atual, "\n")] = 0;
-		strcpy(dicionario[i], atual);
+		strcpy(dicionario->array[i], atual);
 		i++;
-		// se i chega ao mesmo valor da quantidade maxima, ela eh aumentada num valor constante
+		// se i chega ao mesmo valor da quantidade maxima, a quantidade eh aumentada num valor constante
 		if(i == quantidade){
 			quantidade += BUFFER;
-			dicionario = realloc(dicionario, quantidade * sizeof(char *));
+			dicionario->array = realloc(dicionario->array, quantidade * sizeof(char *));
 			for(j = i; j < quantidade; j++){
-				dicionario[j] = malloc(MAXWRD * sizeof(char));	
+				dicionario->array[j] = malloc(MAXWRD * sizeof(char));	
 			}
 		}
 	}
+	dicionario->tam = i;
 	return dicionario;
 }
 
-int tam_dicionario(char ***dicionario){
-	int tam;
-
-	tam = sizeof(dicionario)/sizeof(char *);
-
-	return tam;
+void sort_dicionario(struct dicionario *dicionario){
+	qsort(dicionario->array, dicionario->tam, sizeof(char *), string_cmp);
 }
 
-void sort_dicionario(int tam, char ***dicionario){
-	qsort(dicionario, tam, sizeof(char *), string_cmp);
-}
-
-void checa_texto(char ***dicionario){
+void checa_texto(struct dicionario *dicionario){
 	int i;
 	char c, atual[MAXWRD];
 
 	i = 0;
 	while((c = getchar()) != EOF){
+		//se o caracter for alfanumerico, acrescentar na string
 		if(isalpha(c)){
 			atual[i] = c;
 			i++;
+		//se nao, a string acabou
 		} else {
 			atual[i] = '\0';
-			if(!busca_bin(atual, *dicionario, i)){
+			if(!busca_bin(atual, dicionario->array, dicionario->tam)){
 				printf("[%s]", atual);
 			} else {
 				printf("%s", atual);
 			}
+			//para imprimir não-alfanumericos
 			printf("%c", c);
 			i = 0;
 		}
 	}
 }
 
-void libera_dicionario(char ***dicionario){
-	int tam, i;
+void libera_dicionario(struct dicionario *dicionario){
+	int i;
 
-	tam = tam_dicionario(dicionario);
-	for(i = 0; i < tam; i++){
-		free(dicionario[i]);
+	for(i = 0; i < dicionario->tam; i++){
+		free(dicionario->array[i]);
 	}
+	free(dicionario->array);
 	free(dicionario);
 }

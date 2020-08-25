@@ -3,14 +3,18 @@
 
 #define MAXWRD 100
 #define BUFFER 10000
+struct dicionario{
+	char **array;
+	int tam;	
+};
 
-char **aloca_dicionario(FILE *arq);
+struct dicionario *aloca_dicionario(FILE *arq);
 
-int tam_dicionario(char ***dicionario);
+int tam_dicionario(struct dicionario *dicionario);
 
-void sort_dicionario(int tam, char ***dicionario);
+void sort_dicionario(struct dicionario *dicionario);
 
-void checa_texto(char ***dicionario);
+void checa_texto(struct dicionario *dicionario);
 
-void libera_dicionario(char ***dicionario);
+void libera_dicionario(struct dicionario *dicionario);
 #endif

@@ -8,8 +8,7 @@
 
 int main(){
 	FILE *arq;
-	char **dicionario;
-	int tam;
+	struct dicionario *dicionario;
 
 	setlocale (LC_ALL, "pt_BR.ISO-8859-1");
 	
@@ -23,12 +22,11 @@ int main(){
 	    	}
 	}
 	
-	dicionario = aloca_dicionario(arq);	
+	dicionario = aloca_dicionario(arq);
 	fclose(arq);
 
-	tam = tam_dicionario(&dicionario);
-	sort_dicionario(tam, &dicionario);
-	checa_texto(&dicionario);
-	libera_dicionario(&dicionario);
+	sort_dicionario(dicionario);
+	checa_texto(dicionario);
+	libera_dicionario(dicionario);
 	return 0;
 }
