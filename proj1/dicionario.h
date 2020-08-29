@@ -10,6 +10,8 @@ struct dicionario{
 	int tam;	
 };
 
+void arruma_locale(char *locale);
+
 struct dicionario *aloca_dicionario(FILE *arq);
 
 int tam_dicionario(struct dicionario *dicionario);

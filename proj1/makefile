@@ -6,9 +6,10 @@ all: ortografia
 # ligacao
 ortografia: $(objs)
 
-#compilacao
+# compilacao
 ortografia.o: ortografia.c dicionario.h
 dicionario.o: dicionario.c dicionario.h
+
 
 clean:
 	-rm -f *.o

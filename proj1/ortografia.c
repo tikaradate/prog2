@@ -1,4 +1,4 @@
-//GRR 20190367 Vinicius Tikara Venturi Date
+// GRR 20190367 Vinicius Tikara Venturi Date
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,25 +12,27 @@ int main(){
 	FILE *arq;
 	struct dicionario *dicionario;
 
-	// testar direito setlocale
-	setlocale (LC_ALL, "pt_BR.ISO-8859-1");
-	// transformar isso em funcao?
+	arruma_locale("pt_BR.ISO-8859-1");
+	
 	arq = fopen("/usr/share/dict/brazilian", "r");
 	if(!arq){
-		perror("Nao foi possivel achar o dicionario no diretorio padrao, tentando agora abrir o baixado");
+		perror("/usr/share/dict/brazilian");
 		arq = fopen("brazilian", "r");
 		if(!arq){
-			perror("Erro ao abrir brazilian, encerrando o programa\n");
+			perror("./brazilian");
 			exit(1);
 	    	}
 	}
 	
 	dicionario = aloca_dicionario(arq);
+	
 	// fecha o arquivo no mesmo escopo em que foi aberto
 	fclose(arq);
 	
 	sort_dicionario(dicionario);
+	
 	checa_texto(dicionario);
+	
 	libera_dicionario(dicionario);
 
 	return 0;

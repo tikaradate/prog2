@@ -5,6 +5,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <locale.h>
 #include "dicionario.h"
 
 static int string_cmp(const void *a, const void *b) {
@@ -13,15 +14,34 @@ static int string_cmp(const void *a, const void *b) {
 	return strcasecmp(*(char **)a, *(char **)b);
 }
 
+void arruma_locale(char *locale){
+	if(setlocale(LC_ALL, locale) == NULL){
+		fprintf(stderr, "Locale nao achada\n");
+		exit(1);
+	}
+}
+
 struct dicionario* aloca_dicionario(FILE *arq){
 	int i, j, quantidade;
 	char atual[MAXWRD];
 	struct dicionario *dicionario;
 
 	dicionario = malloc(sizeof(struct dicionario));
+	if(!dicionario){
+		perror("dicionario");
+		free(dicionario);
+		exit(1);
+	}
+	
 	//primeira alocacao
 	quantidade = BUFFER;
 	dicionario->array = malloc(quantidade * sizeof(char*));
+	//TODO funcao de checagem dos ponteiros
+	if(!dicionario->array){
+		perror("dicionario->array");
+		free(dicionario->array);
+		exit(1);
+	}
 	for(i = 0; i < quantidade; i++){
 		dicionario->array[i] = malloc(MAXWRD * sizeof(char));
 	}
