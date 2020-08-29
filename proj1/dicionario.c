@@ -1,35 +1,16 @@
+//GRR20190367 Vinicius Tikara Venturi Date
+
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "dicionario.h"
 
 static int string_cmp(const void *a, const void *b) {
 	//para acessar cada palavra precisamos de char**
-	//e o qsort nos dÃ¡ um ponteiro para o elemento
+	//e o qsort nos da um ponteiro para o elemento
 	return strcasecmp(*(char **)a, *(char **)b);
-}
-
-static int busca_bin(char *chave, char **array, int elem){
-	if(strlen(chave) == 0)
-		return 1;
-	int ini, meio, fim, teste;
-	
-	ini = 0;
-	meio = elem/2;
-	fim = elem;
-	while(ini <= fim){
-		teste = strcasecmp(chave, array[meio]);
-		if(teste == 0){
-			return 1;
-		} else if(teste > 0) {
-			ini = meio + 1;
-		} else {
-			fim = meio - 1;
-		}
-		meio = (ini + fim)/2;
-	}
-	return 0;
 }
 
 struct dicionario* aloca_dicionario(FILE *arq){
@@ -59,6 +40,7 @@ struct dicionario* aloca_dicionario(FILE *arq){
 			}
 		}
 	}
+
 	dicionario->tam = i;
 	return dicionario;
 }
@@ -69,18 +51,20 @@ void sort_dicionario(struct dicionario *dicionario){
 
 void checa_texto(struct dicionario *dicionario){
 	int i;
-	char c, atual[MAXWRD];
+	char c, *atual;
 
+	atual = malloc(sizeof(char) * MAXWRD);
 	i = 0;
 	while((c = getchar()) != EOF){
 		//se o caracter for alfanumerico, acrescentar na string
 		if(isalpha(c)){
 			atual[i] = c;
 			i++;
-		//se nao, a string acabou
+			//se nao, a string acabou
 		} else {
 			atual[i] = '\0';
-			if(!busca_bin(atual, dicionario->array, dicionario->tam)){
+			//variavel de teste do bsearch, if muito longo
+			if(!bsearch(&atual, dicionario->array, dicionario->tam, sizeof(char *), string_cmp) && (strlen(atual) > 0)){
 				printf("[%s]", atual);
 			} else {
 				printf("%s", atual);
@@ -90,12 +74,15 @@ void checa_texto(struct dicionario *dicionario){
 			i = 0;
 		}
 	}
+	free(atual);
 }
 
+// funcao para desalocar o espaco alocado
 void libera_dicionario(struct dicionario *dicionario){
-	int i;
+	int i, extra;
 
-	for(i = 0; i < dicionario->tam; i++){
+	extra = BUFFER - (dicionario->tam % BUFFER);
+	for(i = 0; i < dicionario->tam + extra; i++){
 		free(dicionario->array[i]);
 	}
 	free(dicionario->array);

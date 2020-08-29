@@ -1,3 +1,5 @@
+//GRR 20190367 Vinicius Tikara Venturi Date
+
 #ifndef __DICIONARIO__
 #define __DICIONARIO__
 
