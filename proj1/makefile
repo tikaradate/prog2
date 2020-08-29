@@ -1,3 +1,5 @@
+# GRR20190367 Vinicius Tikara Venturi Date
+
 CFLAGS = -std=c99 -Wall
 objs = ortografia.o dicionario.o
 

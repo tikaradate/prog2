@@ -23,20 +23,21 @@ void arruma_locale(char *locale){
 
 struct dicionario* aloca_dicionario(FILE *arq){
 	int i, j, quantidade;
-	char atual[MAXWRD];
+	char atual[MAXWRD], **realloc_ptr;
 	struct dicionario *dicionario;
 
 	dicionario = malloc(sizeof(struct dicionario));
+	dicionario->tam = 0;
 	if(!dicionario){
 		perror("dicionario");
-		free(dicionario);
+		libera_dicionario(dicionario);
 		exit(1);
 	}
 	
 	//primeira alocacao
 	quantidade = BUFFER;
 	dicionario->array = malloc(quantidade * sizeof(char*));
-	//TODO funcao de checagem dos ponteiros
+	//funcao para checar ponteiros?
 	if(!dicionario->array){
 		perror("dicionario->array");
 		free(dicionario->array);
@@ -44,6 +45,13 @@ struct dicionario* aloca_dicionario(FILE *arq){
 	}
 	for(i = 0; i < quantidade; i++){
 		dicionario->array[i] = malloc(MAXWRD * sizeof(char));
+		
+		if(!dicionario->array[i]){
+			perror("palavra em dicionario->arra");
+			dicionario->tam = i;
+			libera_dicionario(dicionario);
+			exit(1);
+		}
 	}
 
 	i = 0;
@@ -51,12 +59,26 @@ struct dicionario* aloca_dicionario(FILE *arq){
 		atual[strcspn(atual, "\n")] = 0;
 		strcpy(dicionario->array[i], atual);
 		i++;
+		
 		// se i chega ao mesmo valor da quantidade maxima, a quantidade eh aumentada num valor constante
 		if(i == quantidade){
 			quantidade += BUFFER;
-			dicionario->array = realloc(dicionario->array, quantidade * sizeof(char *));
+			realloc_ptr = realloc(dicionario->array, quantidade * sizeof(char *));
+			if(!realloc_ptr){
+				perror("dicionario->array");
+				libera_dicionario(dicionario);
+				exit(1);
+			}
+			
+			dicionario->array = realloc_ptr;
 			for(j = i; j < quantidade; j++){
-				dicionario->array[j] = malloc(MAXWRD * sizeof(char));	
+				dicionario->array[j] = malloc(MAXWRD * sizeof(char));
+				if(!dicionario->array[j]){
+					perror("palavra em dicionario->array");
+					dicionario->tam = j;
+					libera_dicionario(dicionario);
+					exit(1);
+				}
 			}
 		}
 	}
@@ -74,6 +96,13 @@ void checa_texto(struct dicionario *dicionario){
 	char c, *atual;
 
 	atual = malloc(sizeof(char) * MAXWRD);
+	if(!atual){
+		perror("palavra atual, funcao checa_texto");
+		free(atual);
+		libera_dicionario(dicionario);
+		exit(1);
+	}
+
 	i = 0;
 	while((c = getchar()) != EOF){
 		//se o caracter for alfanumerico, acrescentar na string
@@ -101,6 +130,7 @@ void checa_texto(struct dicionario *dicionario){
 void libera_dicionario(struct dicionario *dicionario){
 	int i, extra;
 
+	// conta para calcular quanto do BUFFER a mais foi alocado
 	extra = BUFFER - (dicionario->tam % BUFFER);
 	for(i = 0; i < dicionario->tam + extra; i++){
 		free(dicionario->array[i]);
