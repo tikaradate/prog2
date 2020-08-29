@@ -8,6 +8,7 @@ ortografia: $(objs)
 
 #compilacao
 ortografia.o: ortografia.c dicionario.h
+dicionario.o: dicionario.c dicionario.h
 
 clean:
 	-rm -f *.o
