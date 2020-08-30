@@ -1,4 +1,4 @@
-// GRR 20190367 Vinicius Tikara Venturi Date
+// GRR20190367 Vinicius Tikara Venturi Date
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,9 +29,10 @@ int main(){
 	// fecha o arquivo no mesmo escopo em que foi aberto
 	fclose(arq);
 	
-	sort_dicionario(dicionario);
+	// ordenamento necessario pois o dicionario vem com as maiusculas antes das minusculas
+	ordena_dicionario(dicionario);
 	
-	checa_texto(dicionario);
+	verifica_texto(dicionario);
 	
 	libera_dicionario(dicionario);
 
