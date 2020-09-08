@@ -20,7 +20,7 @@ struct wav_file{
     struct data{
         char     sub_chunk2_ID[4];
         uint32_t sub_chunk2_size;
-        uint32_t *audio_data;
+        uint16_t *audio_data;
     } data;
 
 };
