@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#define SIZE 44
+#define HEADER_SIZE 44
 
 struct wav_file{
     struct RIFF{
@@ -20,7 +20,7 @@ struct wav_file{
     struct data{
         char     sub_chunk2_ID[4];
         uint32_t sub_chunk2_size;
-        uint16_t *audio_data;
     } data;
 
+    uint32_t *audio_data;
 };
