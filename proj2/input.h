@@ -1,1 +1,3 @@
-void input_opcoes(FILE **input, int argc, char* argv[]);
+#include <stdio.h>
+
+char *input_opcoes(int argc, char* argv[]);

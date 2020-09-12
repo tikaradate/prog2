@@ -1,12 +1,15 @@
+#include <stdlib.h>
 #include "leitura.h"
 
 void le_header(struct wav_file *wav, FILE *input){
+    // Lê de byte a byte(1) o header de HEADER_SIZE(44)
     fread(wav, 1, HEADER_SIZE, input);
 }
 
-void imprime_info(struct wav_file *file){
+void imprime_header_info(struct wav_file *file){
     int bytes_sample, sample_channel;
 
+    // formato %.4s para imprimir os 4 primeiros caracteres da string, visto que elas não tem NULL-terminator
     printf("riff tag        (4 bytes): \"%.4s\"\n"
            "riff size       (4 bytes): %d\n"
            "wave tag        (4 bytes): \"%.4s\"\n"
@@ -32,7 +35,7 @@ void imprime_info(struct wav_file *file){
     
     // contas separadas para não ficar poluído
     bytes_sample = file->fmt.bits_per_sample/8;
-    sample_channel = file->data.sub_chunk2_size/((file->fmt.bits_per_sample/8)*file->fmt.num_channels);
+    sample_channel = file->data.sub_chunk2_size/(bytes_sample*file->fmt.num_channels);
     
     printf("data tag        (4 bytes): \"%.4s\"\n"
            "data size       (4 bytes): %d\n"
@@ -42,4 +45,15 @@ void imprime_info(struct wav_file *file){
             file->data.sub_chunk2_size,
             bytes_sample,
             sample_channel);
+}
+
+void le_audio_data(struct wav_file *file, FILE *input){
+    int num_samples_2_bytes;
+    
+    // divide-se por 2 pois audio_data é de 2 bytes(int16_t) enquanto sub_chunk2_size dá o número de bytes
+    num_samples_2_bytes = file->data.sub_chunk2_size/2;
+    file->audio_data = malloc(num_samples_2_bytes);
+    // pula o cabeçalho para a leitura
+    fseek(input, HEADER_SIZE, SEEK_SET);
+    fread(file->audio_data, 2, num_samples_2_bytes, input);
 }

@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include "struct.h"
 
-// le o header ate sub_chunk2_size, uma vez que audio_data é variavel
+// lê o header até sub_chunk2_size, uma vez que audio_data é variavel
 void le_header(struct wav_file *file, FILE *input);
 
-// imrpime cabeçalho
-void imprime_info(struct wav_file *file);
+// imprime cabeçalho
+void imprime_header_info(struct wav_file *file);
+
+// lê o stream de áudio após o cabeçalho
+void le_audio_data(struct wav_file *file, FILE *input);

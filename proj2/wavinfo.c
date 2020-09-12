@@ -9,9 +9,9 @@ int main(int argc, char *argv[]){
 
     wav = malloc(sizeof(struct wav_file));
 
-    input_opcoes(&input, argc, argv);
+    path = input_opcoes(argc, argv);
+    input = fopen(path, "r");
     le_header(wav, input);
-    imprime_info(wav);
+    imprime_header_info(wav);
     fclose(input);
-
 }
