@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     FILE *input, *output;
     char *path;
     struct wav_file *wav;
-    int i, tam;
+    int i, j, c, canais, tam;
     int16_t *rev;
 
     wav = malloc(sizeof(struct wav_file));
@@ -27,8 +27,15 @@ int main(int argc, char *argv[]) {
     tam = wav->data.sub_chunk2_size/2;
     rev = malloc(sizeof(int16_t)*(tam));
 
-    for (i = 0; i < tam; i++) {
-        rev[i] = wav->audio_data[tam - 1 - i];
+    c = 0;
+    canais = wav->fmt.num_channels;
+    for (i = 0; i < tam; i+=canais) {
+        // canais - 1 pois o vetor começa em 0
+        for(j = canais - 1; j >= 0; j--){
+            // contador necessário pois j decresce
+            rev[i+j] = wav->audio_data[tam - 1 - c];
+            c++;
+        }
     }
 
     path = output_opts(argc, argv);
@@ -37,6 +44,7 @@ int main(int argc, char *argv[]) {
     else
         output = stdout;
 
+    // arrumar magic numbers??
     fwrite(wav, 1, HEADER_SIZE, output);
     fwrite(rev, 2, tam, output);
 
