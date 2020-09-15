@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -std=c99
 
-efeitos = wavinfo wavvol wavnor wavrev wavech wavwid wavcat wavmix
+efeitos = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix
 objs =    leitura.o analise_args.o
 headers = leitura.h analise_args.h struct.h
 
@@ -32,5 +32,5 @@ clean:
 	rm -f *.o
 
 purge:
-	rm -f $(efeitos)
 	clean
+	rm -f $(efeitos)

@@ -24,7 +24,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             arguments->output = arg;
             break;
         case 'l':
-            arguments->level = atoi(arg);
+            arguments->level = atof(arg);
             break;
         case 't':
             arguments->delay = atof(arg);
@@ -58,9 +58,9 @@ struct argumentos linha_de_comando(int argc, char *argv[]) {
 
     arguments.input = NULL;
     arguments.output = NULL;
-    if (strcmp(argv[0], "./wavecho")) {
+    if (strcmp(argv[0], "./wavecho") == 0) {
         arguments.level = LEVEL_ECHO;
-    } else if (strcmp(argv[0], "./wavwide")) {
+    } else if (strcmp(argv[0], "./wavwide") == 0) {
         arguments.level = LEVEL_WIDE;
     } else {
         arguments.level = LEVEL_VOL;   
