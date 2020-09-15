@@ -1,19 +1,20 @@
 #include <stdlib.h>
 #include <inttypes.h>
-#include "input.h"
+#include "analise_args.h"
 #include "leitura.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    char *path;
     struct wav_file *wav;
-    int i, j, diff, canais, tam, conta;
-    int16_t *rev;
+    struct argumentos args;
+    char *path;
+    int i, diff, tam;
 
     wav = malloc(sizeof(struct wav_file));
 
-    path = input_opcoes(argc, argv);
+    args = linha_de_comando(argc, argv);
     // função pra isso?
+    path = args.input;
     if (path != NULL)
         input = fopen(path, "r");
     else
@@ -25,15 +26,13 @@ int main(int argc, char *argv[]) {
     // como são 2 bytes por sample e o tamanho é dado em número de bytes
     // há a necessidade de dividir por 2 para nenhum erro
     tam = wav->data.sub_chunk2_size/2;
-    float k = 5;
-    canais = wav->fmt.num_channels;
     for (i = 0; i < tam; i+=2) {
             diff = wav->audio_data[i+1] - wav->audio_data[i];
-            wav->audio_data[i+1] = wav->audio_data[i+1] + (k*diff);
-            wav->audio_data[i] = wav->audio_data[i] - (k*diff);
+            wav->audio_data[i+1] = wav->audio_data[i+1] + (args.level*diff);
+            wav->audio_data[i] = wav->audio_data[i] - (args.level*diff);
     }
 
-    path = output_opts(argc, argv);
+    path = args.output;
     if (path != NULL)
         output = fopen(path, "w");
     else

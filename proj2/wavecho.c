@@ -1,19 +1,21 @@
 #include <stdlib.h>
 #include <inttypes.h>
-#include "input.h"
+#include "analise_args.h"
 #include "leitura.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    char *path;
     struct wav_file *wav;
-    int i, j, delay, canais, tam, conta;
+    struct argumentos args;
+    char *path;
+    int i, j, canais, tam, conta;
     int16_t *rev;
 
     wav = malloc(sizeof(struct wav_file));
 
-    path = input_opcoes(argc, argv);
+    args = linha_de_comando(argc, argv);
     // função pra isso?
+    path = args.input;
     if (path != NULL)
         input = fopen(path, "r");
     else
@@ -28,20 +30,18 @@ int main(int argc, char *argv[]) {
     rev = wav->audio_data;
 
     // ler do terminal
-    delay = 500;
-    float level = 1;
     canais = wav->fmt.num_channels;
     // conta para saber quantos indices voltar
     // talvez explicar melhor??
-    conta = wav->fmt.sample_rate*canais*delay/1000;
+    conta = wav->fmt.sample_rate*canais*args.delay/1000;
     for (i = 0; i < canais; i++) {
         for(j = i; j < tam; j+=canais){
             if(j - conta >= 0)
-                rev[j] = wav->audio_data[j] +(level*wav->audio_data[j - conta]);         
+                rev[j] = wav->audio_data[j] +(args.level*wav->audio_data[j - conta]);         
         }
     }
 
-    path = output_opts(argc, argv);
+    path = args.output;
     if (path != NULL)
         output = fopen(path, "w");
     else

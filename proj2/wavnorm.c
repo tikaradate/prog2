@@ -1,18 +1,20 @@
 #include <stdlib.h>
 #include "leitura.h"
-#include "input.h"
+#include "analise_args.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    char *path;
     struct wav_file *wav;
+    struct argumentos args;
+    char *path;
     int i, max;
     float norm;
 
     wav = malloc(sizeof(struct wav_file));
 
-    path = input_opcoes(argc, argv);
+    args = linha_de_comando(argc, argv);
     // função pra isso?
+    path = args.input;
     if (path != NULL)
         input = fopen(path, "r");
     else
@@ -20,19 +22,20 @@ int main(int argc, char *argv[]) {
 
     le_header(wav, input);
     le_audio_data(wav, input);
-    // fazer numa função
+    // fazer numa função (acha max)
     for (i = 0; i < wav->data.sub_chunk2_size / 2; i++) {
         if (wav->audio_data[i] > max) 
             max = wav->audio_data[i];
     }
     norm = (float) INT16_MAX / max;
 
+    // func normaliza
     for (i = 0; i < wav->data.sub_chunk2_size / 2; i++) {
         // casting para int, pois a multiplicação resulta em float
         wav->audio_data[i] = (int)(wav->audio_data[i]*norm);
     }
     //função pra isso?
-    path = output_opts(argc, argv);
+    path = args.output;
     if (path != NULL)
         output = fopen(path, "w");
     else

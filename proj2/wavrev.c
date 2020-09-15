@@ -1,19 +1,21 @@
 #include <stdlib.h>
 #include <inttypes.h>
-#include "input.h"
+#include "analise_args.h"
 #include "leitura.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    char *path;
     struct wav_file *wav;
+    struct argumentos args;
+    char *path;
     int i, j, c, canais, tam;
     int16_t *rev;
 
     wav = malloc(sizeof(struct wav_file));
 
-    path = input_opcoes(argc, argv);
+    args = linha_de_comando(argc, argv);
     // função pra isso?
+    path = args.input;
     if (path != NULL)
         input = fopen(path, "r");
     else
@@ -38,7 +40,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    path = output_opts(argc, argv);
+    path = args.output;
     if (path != NULL)
         output = fopen(path, "w");
     else

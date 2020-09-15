@@ -7,6 +7,13 @@ void le_header(struct wav_file *wav, FILE *input) {
     fread(wav, 1, HEADER_SIZE, input);
 }
 
+void le_audio_data(struct wav_file *file, FILE *input) {
+    file->audio_data = malloc(sizeof(int16_t)*file->data.sub_chunk2_size/2);
+    // pula o cabeçalho para a leitura
+    fseek(input, HEADER_SIZE, SEEK_SET);
+    fread(file->audio_data, 2, file->data.sub_chunk2_size, input);
+}
+
 void imprime_header_info(struct wav_file *file) {
     int bytes_sample, sample_channel;
 
@@ -40,11 +47,4 @@ void imprime_header_info(struct wav_file *file) {
         "samples per channel      : %d\n",
         file->data.sub_chunk2_ID, file->data.sub_chunk2_size, bytes_sample,
         sample_channel);
-}
-
-void le_audio_data(struct wav_file *file, FILE *input) {
-    file->audio_data = malloc(sizeof(int16_t)*file->data.sub_chunk2_size/2);
-    // pula o cabeçalho para a leitura
-    fseek(input, HEADER_SIZE, SEEK_SET);
-    fread(file->audio_data, 2, file->data.sub_chunk2_size, input);
 }
