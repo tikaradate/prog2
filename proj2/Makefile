@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -std=c99
+CFLAGS = -Wall -std=c99 -g
 
 efeitos = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix
 objs =    leitura.o analise_args.o
@@ -16,21 +16,11 @@ wavwide: wavwide.o $(objs)
 wavcat:  wavcat.o $(objs)
 wavmix:  wavmix.o $(objs)
 
-wavinfo.o: wavinfo.c $(headers)
-wavvol.o:  wavvol.c $(headers)
-wavnorm.o: wavnorm.c $(headers)
-wavrev.o:  wavrev.c $(headers)
-wavecho.o: wavecho.c $(headers)
-wavwide.o: wavwide.c $(headers)
-wavcat.o:  wavcat.c $(headers)
-wavmix.o:  wavmix.c $(headers)
-
 leitura.o:      leitura.c leitura.h
 analise_args.o: analise_args.c analise_args.h
 
 clean:
 	rm -f *.o
 
-purge:
-	clean
+purge: clean
 	rm -f $(efeitos)

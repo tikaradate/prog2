@@ -40,7 +40,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             //  In addition, by setting state->next to the end
             //  of the arguments, we can force argp to stop parsing here and
             //  return.
-
+            state->next--;
             arguments->arquivos = &state->argv[state->next];
             state->next = state->argc;
             break;
