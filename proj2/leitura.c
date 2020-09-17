@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+
 void le_header(struct wav_file *wav, FILE *input) {
     // Lê de byte a byte(1) o header de HEADER_SIZE(44)
     fread(wav, 1, HEADER_SIZE, input);
@@ -15,7 +16,7 @@ void le_audio_data(struct wav_file *file, FILE *input) {
 }
 
 void imprime_header_info(struct wav_file *file) {
-    int bytes_sample, sample_channel;
+    int bytes_sample, samples_per_channel;
 
     // formato %.4s para imprimir os 4 primeiros caracteres da string, visto que
     // elas não tem NULL-terminator
@@ -36,9 +37,9 @@ void imprime_header_info(struct wav_file *file) {
         file->fmt.audio_format, file->fmt.num_channels, file->fmt.sample_rate,
         file->fmt.byte_rate, file->fmt.block_align, file->fmt.bits_per_sample);
 
-    // contas separadas para não ficar poluído
+    // contas 
     bytes_sample = file->fmt.bits_per_sample / 8;
-    sample_channel = file->data.sub_chunk2_size / (bytes_sample * file->fmt.num_channels);
+    samples_per_channel = file->data.sub_chunk2_size / (bytes_sample * file->fmt.num_channels);
 
     printf(
         "data tag        (4 bytes): \"%.4s\"\n"
@@ -46,5 +47,24 @@ void imprime_header_info(struct wav_file *file) {
         "bytes per sample         : %d\n"
         "samples per channel      : %d\n",
         file->data.sub_chunk2_ID, file->data.sub_chunk2_size, bytes_sample,
-        sample_channel);
+        samples_per_channel);
+}
+
+FILE *arruma_input(char *input) {
+    if (input != NULL)
+        return(fopen(input, "r"));
+    else
+        return(stdin);
+}
+
+FILE *arruma_output(char *output){
+    if(output != NULL)
+        return(fopen(output, "w"));
+    else
+        return(stdout);   
+}
+
+void escreve_em_out(struct wav_file *wav, FILE *output){
+    fwrite(wav, 1, HEADER_SIZE, output);
+    fwrite(wav->audio_data, 1, wav->data.sub_chunk2_size, output);
 }

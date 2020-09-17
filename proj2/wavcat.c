@@ -28,9 +28,7 @@ int main(int argc, char *argv[]) {
     FILE *input, *output;
     struct wav_file *cat, *atual;
     struct argumentos args;
-    char *path;
-    int i, j, n_arquivos, tam, conta;
-    int16_t *rev;
+    int i, n_arquivos;
 
     args = linha_de_comando(argc, argv);
 
@@ -55,15 +53,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    path = args.output;
-    if (path != NULL)
-        output = fopen(path, "w");
-    else
-        output = stdout;
+    output = arruma_output(args.output);
 
-    // arrumar magic numbers??
-    fwrite(cat, 1, HEADER_SIZE, output);
-    fwrite(cat->audio_data, 1, cat->data.sub_chunk2_size, output);
+    escreve_em_out(cat, output);
 
     fclose(input);
     fclose(output);
