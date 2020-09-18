@@ -21,9 +21,10 @@ int main(int argc, char *argv[]) {
         if (wav.audio_data[i] > max) 
             max = wav.audio_data[i];
     }
+    // conta de normalização
     norm = (float) INT16_MAX / max;
 
-    // aplica o filtro de normalização
+    // aplica a constante de normalização no áudio 
     for (i = 0; i < wav.data.sub_chunk2_size / 2; i++) {
         wav.audio_data[i] = arruma_overflow(wav.audio_data[i] * norm);
     }

@@ -15,6 +15,7 @@ struct argumentos {
     float delay;
 };
 
+// arruma os argumentos da linha de comando e lê
 struct argumentos linha_de_comando(int argc, char *argv[]);
 
 #endif

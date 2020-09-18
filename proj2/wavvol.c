@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     le_audio_data(&wav, input);
 
     tam = audio_data_tam(&wav);
+    // aplica o volume em todas as amostras
     for (i = 0; i < tam; i++) {
         wav.audio_data[i] = arruma_overflow(wav.audio_data[i] * args.level);
     }

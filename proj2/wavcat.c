@@ -15,6 +15,7 @@ void concatena(struct wav_file *base, struct wav_file *alvo) {
         exit(1);
     }
 
+    // tamanho adequado para a concatenação
     base_tam = audio_data_tam(base);
     alvo_tam = audio_data_tam(alvo);
     novo_tam = base_tam + alvo_tam;
@@ -56,6 +57,7 @@ int main(int argc, char *argv[]) {
     le_header(&cat, input);
     le_audio_data(&cat, input);
 
+    // se houver apenas 1 arquivo, não há o que concatenar
     if (n_arquivos > 1) {
         for (i = 1; i < n_arquivos; i++) {
             freopen(args.arquivos[i], "r", input);

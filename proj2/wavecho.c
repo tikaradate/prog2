@@ -19,14 +19,17 @@ int main(int argc, char *argv[]) {
 
     tam = audio_data_tam(&wav);
     canais = wav.fmt.num_channels;
-    // conta para saber quantos indices voltar
-    // talvez explicar melhor??
+    // conta para saber quantas samples voltar para o uso da equação do echo
+    // utiliza a taxa de amostragem, que é dada em segundos
     conta = wav.fmt.sample_rate * canais * args.delay / 1000;
+    // percorre todos os canais
     for (i = 0; i < canais; i++) {
+        // percorre todas as samples do mesmo canal
         for (j = i; j < tam; j += canais) {
+            // checa se a sample existe
             if (j - conta >= 0)
-                wav.audio_data[j] = 
-                arruma_overflow(wav.audio_data[j]+(args.level*wav.audio_data[j - conta]));
+                wav.audio_data[j] =
+                    arruma_overflow(wav.audio_data[j]+(args.level*wav.audio_data[j - conta]));
         }
     }
 

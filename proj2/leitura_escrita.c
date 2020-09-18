@@ -15,7 +15,7 @@ void le_audio_data(struct wav_file *wav, FILE *input) {
     }
     // pula o cabeçalho para a leitura
     fseek(input, HEADER_SIZE, SEEK_SET);
-    fread(wav->audio_data, wav->fmt.block_align, wav->data.sub_chunk2_size, input);
+    fread(wav->audio_data, 2, wav->data.sub_chunk2_size, input);
 }
 
 void imprime_header_info(struct wav_file *wav) {
@@ -35,13 +35,20 @@ void imprime_header_info(struct wav_file *wav) {
         "byte_rate       (4 bytes): %d\n"
         "block_align     (2 bytes): %d\n"
         "bits_per_sample (2 bytes): %d\n",
-        wav->riff.chunk_ID, wav->riff.chunk_size, wav->riff.format,
-        wav->fmt.sub_chunk1_ID, wav->fmt.sub_chunk1_size,
-        wav->fmt.audio_format, wav->fmt.num_channels, wav->fmt.sample_rate,
-        wav->fmt.byte_rate, wav->fmt.block_align, wav->fmt.bits_per_sample);
+        wav->riff.chunk_ID,
+        wav->riff.chunk_size,
+        wav->riff.format,
+        wav->fmt.sub_chunk1_ID,
+        wav->fmt.sub_chunk1_size,
+        wav->fmt.audio_format,
+        wav->fmt.num_channels,
+        wav->fmt.sample_rate,
+        wav->fmt.byte_rate,
+        wav->fmt.block_align,
+        wav->fmt.bits_per_sample);
 
     // contas
-    bytes_sample = wav->fmt.block_align;
+    bytes_sample = wav->fmt.bits_per_sample/8;
     samples_per_channel =
         wav->data.sub_chunk2_size / (bytes_sample * wav->fmt.num_channels);
 
@@ -50,9 +57,12 @@ void imprime_header_info(struct wav_file *wav) {
         "data size       (4 bytes): %d\n"
         "bytes per sample         : %d\n"
         "samples per channel      : %d\n",
-        wav->data.sub_chunk2_ID, wav->data.sub_chunk2_size, bytes_sample,
+        wav->data.sub_chunk2_ID,
+        wav->data.sub_chunk2_size,
+        bytes_sample,
         samples_per_channel);
 }
+
 
 FILE *arruma_input(char *input) {
     if (input != NULL)

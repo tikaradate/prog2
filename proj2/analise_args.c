@@ -4,15 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* estruturas e funções necessárias para o argp */
+/* estruturas e funções necessárias para o argp.h */
 
+// breve descrição das opções
 static struct argp_option options[] = {
     {"input", 'i', "INPUT", 0, "Lê de INPUT invés de stdin"},
     {"output", 'o', "OUTPUT", 0, "Escreve em OUTPUT invés de stdout"},
-    {"level", 'l', "LEVEL", 0, "Fator de ajuste de alguns efeitos"},
+    {"level", 'l', "LEVEL", 0, "Fator de ajuste de alguns efeitos(wavecho, wavvol, wavwide)"},
     {"delay", 't', "DELAY", 0, "Delay, em ms, para o wavecho"},
     {0}};
 
+// função que analisa os argumentos
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     struct argumentos *arguments = state->input;
 
@@ -30,18 +32,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             arguments->delay = atof(arg);
             break;
         case ARGP_KEY_ARG:
-            //  Now we consume all the rest of the arguments.
-            //  state->next is the index in state->argv of the
-            //  next argument to be parsed, which is the first string
-            //  we’re interested in, so we can just use
-            //  &state->argv[state->next] as the value for
-            //  arguments->strings.
-
-            //  In addition, by setting state->next to the end
-            //  of the arguments, we can force argp to stop parsing here and
-            //  return.
+            // como temos o indice o proximo e queremos o atual, decrescemos state->next
             state->next--;
+            // o ponteiro de strings arquivos aponta pro comeco dos argumentos sem opcoes,
+            // isto é, os arquivos em wavcat e wavmix
             arguments->arquivos = &state->argv[state->next];
+            // força a finalização da leitura dos argumentos da linha de comando
             state->next = state->argc;
             break;
         default:
@@ -50,8 +46,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     return 0;
 }
 
+// struct necessária de argp_parse
 static struct argp argp = {options, parse_opt, 0, 0};
-/* fim parte argp */
+/* fim parte argp.h */
 
 struct argumentos linha_de_comando(int argc, char *argv[]) {
     struct argumentos arguments;
@@ -68,6 +65,7 @@ struct argumentos linha_de_comando(int argc, char *argv[]) {
 
     arguments.delay = DELAY_ECHO;
     argp_parse(&argp, argc, argv, 0, 0, &arguments);
+
 
     return arguments;
 }

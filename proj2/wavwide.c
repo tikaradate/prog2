@@ -13,12 +13,12 @@ int main(int argc, char *argv[]) {
     args = linha_de_comando(argc, argv);
 
     input = arruma_input(args.input);
-
+    // talvez checar o numero de canais?
     le_header(&wav, input);
     le_audio_data(&wav, input);
 
     tam = audio_data_tam(&wav);
-    // operação do wavwide
+    // fórmula do wavwide aplicada
     for (i = 0; i < tam; i += 2) {
         diff = wav.audio_data[i + 1] - wav.audio_data[i];
         wav.audio_data[i + 1] =

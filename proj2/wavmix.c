@@ -14,8 +14,8 @@ void mixagem(struct wav_file *base, struct wav_file *alvo) {
         fprintf(stderr, "ERRO: Arquivos incompativeis\n");
         exit(1);
     } 
-    // o arquivo de maior tamanho serve como base para a soma
-    // portanto troca-se os conteudos
+    // o arquivo de maior tamanho serve como base para a soma de samples
+    // portanto há a necessidade da troca
     if (base->data.sub_chunk2_size < alvo->data.sub_chunk2_size) {
         troca = *base;
         *base = *alvo;
@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
     le_header(&mix, input);
     le_audio_data(&mix, input);
 
+    // se houver apenas um arquivo, não há necessidade de mixar
     if (n_arquivos > 1) {
         for (i = 1; i < n_arquivos; i++) {
             freopen(args.arquivos[i], "r", input);
