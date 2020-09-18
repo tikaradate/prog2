@@ -30,14 +30,19 @@ struct wav_file {
     int16_t *audio_data;
 };
 
+
+void aloca_wav_struct(struct wav_file **wav);
+
 // retorna o tamanho em relação ao número de bytes por amostra
 int audio_data_tam(struct wav_file *wav);
 
 // libera o conteudo apontado por audio_data e seta o ponteiro para NULL
-void libera_audio_data(struct wav_file *wav);
+void libera_wav(struct wav_file *wav);
 
 // checa se ocorre overflow e retorna o valor adequado
 int16_t arruma_overflow(int32_t alvo);
+
 // compatibilidade de 2 arquivos quaisquer
 int compara_headers(struct wav_file *arq1, struct wav_file *arq2);
+
 #endif

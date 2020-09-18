@@ -1,6 +1,16 @@
 #include "wavaux.h"
 
+#include <stdio.h>
 #include <stdlib.h>
+
+void aloca_wav_struct(struct wav_file **wav) {
+    *wav = malloc(sizeof(struct wav_file));
+    if (!*wav) {
+        libera_wav(*wav);
+        perror("Erro em aloca_wav_struct:");
+        exit(1);
+    }
+}
 
 // faz as contas adequadas para retornar o tanto que
 // o audio_data precisa alocar
@@ -11,9 +21,11 @@ int audio_data_tam(struct wav_file *wav) {
     return wav->data.sub_chunk2_size / bytes;
 }
 
-void libera_audio_data(struct wav_file *wav) {
+void libera_wav(struct wav_file *wav) {
     free(wav->audio_data);
     wav->audio_data = NULL;
+    free(wav);
+    wav = NULL;
 }
 
 // em int32 cabem ambas soma e multiplicação de int16
@@ -27,7 +39,7 @@ int16_t arruma_overflow(int32_t alvo) {
         return alvo;
 }
 
-// compara os campos relevantes entre 2 arquivos 
+// compara os campos relevantes entre 2 arquivos
 // para compatibilidade em alguns efeitos
 int compara_headers(struct wav_file *arq1, struct wav_file *arq2) {
     if ((arq1->fmt.audio_format != arq2->fmt.audio_format) ||

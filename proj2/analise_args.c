@@ -66,6 +66,22 @@ struct argumentos linha_de_comando(int argc, char *argv[]) {
     arguments.delay = DELAY_ECHO;
     argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
+    if (strcmp(argv[0], "./wavecho") == 0) {
+        if(arguments.level > 1)  
+            arguments.level = 1;
+        if(arguments.level < 0) 
+            arguments.level = 0;
+    } else if (strcmp(argv[0], "./wavwide") == 0) {
+        if(arguments.level > 10)
+            arguments.level = 10;
+        if(arguments.level < 0)
+            arguments.level = 0;
+    } else if(strcmp(argv[0], "./wavvol") == 0) {
+        if(arguments.level > 10)
+            arguments.level = 10;
+        if(arguments.level < 0)
+            arguments.level = 0;
+    }
 
     return arguments;
 }

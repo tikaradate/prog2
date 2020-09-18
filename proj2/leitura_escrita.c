@@ -1,10 +1,11 @@
-#include <stdlib.h>
-
 #include "leitura_escrita.h"
+
+#include <stdlib.h>
 
 void le_header(struct wav_file *wav, FILE *input) {
     // lê de byte a byte(1) o header de HEADER_SIZE(44)
     fread(wav, 1, HEADER_SIZE, input);
+    wav->audio_data = NULL;
 }
 
 void le_audio_data(struct wav_file *wav, FILE *input) {
