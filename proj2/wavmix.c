@@ -2,27 +2,36 @@
 #include <stdlib.h>
 
 #include "analise_args.h"
-#include "leitura.h"
+#include "leitura_escrita.h"
 
 void mixagem(struct wav_file *base, struct wav_file *alvo) {
-    int i;
-    struct wav_file *troca;
+    int i, tam;
+    struct wav_file troca;
 
-    // o arquivo de maior tamanho serve como base
+    if (!compara_headers(base, alvo)) {
+        libera_audio_data(base);
+        libera_audio_data(alvo);
+        fprintf(stderr, "ERRO: Arquivos incompativeis\n");
+        exit(1);
+    } 
+    // o arquivo de maior tamanho serve como base para a soma
+    // portanto troca-se os conteudos
     if (base->data.sub_chunk2_size < alvo->data.sub_chunk2_size) {
-        troca = base;
-        base = alvo;
-        alvo = troca;
+        troca = *base;
+        *base = *alvo;
+        *alvo = troca;
     }
 
-    for (i = 0; i < alvo->data.sub_chunk2_size / 2; i++)
-        base->audio_data[i] += alvo->audio_data[i];
+    tam = audio_data_tam(base);
+    for (i = 0; i < tam; i++)
+        base->audio_data[i] = arruma_overflow(base->audio_data[i] + alvo->audio_data[i]);
+
+    libera_audio_data(alvo);
 }
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    struct wav_file mix = {0},
-                    atual = {0};
+    struct wav_file mix, atual;
     struct argumentos args;
     int i, n_arquivos;
 
@@ -47,9 +56,9 @@ int main(int argc, char *argv[]) {
     }
 
     output = arruma_output(args.output);
-
     escreve_em_out(&mix, output);
 
+    libera_audio_data(&mix);
     fclose(input);
     fclose(output);
 }

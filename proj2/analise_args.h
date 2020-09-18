@@ -1,3 +1,5 @@
+#ifndef __ANALISE_ARGS__
+#define __ANALISE_ARGS__
 #include <stdio.h>
 
 #define LEVEL_VOL  1.0
@@ -14,3 +16,5 @@ struct argumentos {
 };
 
 struct argumentos linha_de_comando(int argc, char *argv[]);
+
+#endif

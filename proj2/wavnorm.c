@@ -1,12 +1,12 @@
 #include <stdlib.h>
-#include "leitura.h"
+#include "leitura_escrita.h"
 #include "analise_args.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    struct wav_file wav = {0};
+    struct wav_file wav;
     struct argumentos args;
-    int i, max;
+    int i, max, tam;
     float norm;
 
     args = linha_de_comando(argc, argv);
@@ -14,23 +14,24 @@ int main(int argc, char *argv[]) {
 
     le_header(&wav, input);
     le_audio_data(&wav, input);
-    // fazer numa função (acha max)?
-    for (i = 0; i < wav.data.sub_chunk2_size / 2; i++) {
+    
+    tam = audio_data_tam(&wav);
+    // acha valor maximo das amostras
+    for (i = 0; i < tam; i++) {
         if (wav.audio_data[i] > max) 
             max = wav.audio_data[i];
     }
     norm = (float) INT16_MAX / max;
 
-    // func normaliza?
+    // aplica o filtro de normalização
     for (i = 0; i < wav.data.sub_chunk2_size / 2; i++) {
-        // casting para int, pois a multiplicação resulta em float
-        // comentario desnecessario ^^^?
-        wav.audio_data[i] = (int)(wav.audio_data[i]*norm);
+        wav.audio_data[i] = arruma_overflow(wav.audio_data[i] * norm);
     }
 
     output = arruma_output(args.output);
     escreve_em_out(&wav, output);
 
+    libera_audio_data(&wav);
     fclose(input);
     fclose(output);
 }

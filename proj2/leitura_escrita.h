@@ -1,4 +1,7 @@
+#ifndef __LEITURA_ESCRITA__
+#define __LEITURA_ESCRITA__
 #include <stdio.h>
+
 #include "wavaux.h"
 
 // lê o header até sub_chunk2_size, uma vez que audio_data é variavel
@@ -18,3 +21,5 @@ FILE *arruma_output(char *output);
 
 // como há 2 campos para escrita, a função faz os 2 juntos
 void escreve_em_out(struct wav_file *wav, FILE *output);
+
+#endif

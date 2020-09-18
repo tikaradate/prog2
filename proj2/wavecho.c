@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 #include "analise_args.h"
-#include "leitura.h"
+#include "leitura_escrita.h"
 #include "wavaux.h"
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    struct wav_file wav = {0};
+    struct wav_file wav;
     struct argumentos args;
     int i, j, canais, tam, conta;
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     le_header(&wav, input);
     le_audio_data(&wav, input);
 
-    tam = wav.data.sub_chunk2_size / 2;
+    tam = audio_data_tam(&wav);
     canais = wav.fmt.num_channels;
     // conta para saber quantos indices voltar
     // talvez explicar melhor??
@@ -26,8 +26,7 @@ int main(int argc, char *argv[]) {
         for (j = i; j < tam; j += canais) {
             if (j - conta >= 0)
                 wav.audio_data[j] = 
-                arruma_overflow_soma(wav.audio_data[j],
-                (args.level*wav.audio_data[j - conta]));
+                arruma_overflow(wav.audio_data[j]+(args.level*wav.audio_data[j - conta]));
         }
     }
 

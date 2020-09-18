@@ -1,61 +1,72 @@
-#include <stdlib.h>
 #include <inttypes.h>
-#include "analise_args.h"
-#include "leitura.h"
+#include <stdlib.h>
 
-void concatena(struct wav_file *base, struct wav_file *alvo){
-    int i, novo_tam;
+#include "analise_args.h"
+#include "leitura_escrita.h"
+
+void concatena(struct wav_file *base, struct wav_file *alvo) {
+    int i, base_tam, alvo_tam, novo_tam;
     int16_t *teste;
 
-    novo_tam = base->data.sub_chunk2_size + alvo->data.sub_chunk2_size;
+    if (!compara_headers(base, alvo)) {
+        libera_audio_data(base);
+        libera_audio_data(alvo);
+        fprintf(stderr, "ERRO: Arquivos incompativeis\n");
+        exit(1);
+    }
 
-    teste =  realloc(base->audio_data, sizeof(int16_t)*novo_tam/2);
-    if(!teste){
-        // liberar o que foi alocado
-        perror("wavcat realloc");
+    base_tam = audio_data_tam(base);
+    alvo_tam = audio_data_tam(alvo);
+    novo_tam = base_tam + alvo_tam;
+
+    teste = realloc(base->audio_data, sizeof(int16_t) * novo_tam);
+    if (!teste) {
+        libera_audio_data(base);
+        libera_audio_data(alvo);
+        perror("erro em realloc no efeito wavcat");
         exit(1);
     }
 
     base->audio_data = teste;
-    for(i = base->data.sub_chunk2_size/2; i < novo_tam/2; i++){
-        base->audio_data[i] = alvo->audio_data[i - base->data.sub_chunk2_size/2];
+    for (i = base_tam; i < novo_tam; i++) {
+        base->audio_data[i] = alvo->audio_data[i - base_tam];
     }
 
-    base->data.sub_chunk2_size = novo_tam;
+    // ajustamento do cabeçalho
+    base->riff.chunk_size += alvo->riff.chunk_size;
+    base->data.sub_chunk2_size += alvo->data.sub_chunk2_size;
+
+    libera_audio_data(alvo);
 }
 
 int main(int argc, char *argv[]) {
     FILE *input, *output;
-    struct wav_file *cat, *atual;
+    struct wav_file cat, atual;
     struct argumentos args;
     int i, n_arquivos;
 
     args = linha_de_comando(argc, argv);
 
     n_arquivos = 0;
-    for(i = 0; args.arquivos[i]; i++){
+    for (i = 0; args.arquivos[i]; i++) {
         n_arquivos++;
     }
 
-    cat = malloc(sizeof(struct wav_file));
-    atual = malloc(sizeof(struct wav_file));
-
     input = fopen(args.arquivos[0], "r");
-    le_header(cat, input);
-    le_audio_data(cat, input);
+    le_header(&cat, input);
+    le_audio_data(&cat, input);
 
-    if(n_arquivos > 1){
-        for(i = 1; i < n_arquivos; i++){
+    if (n_arquivos > 1) {
+        for (i = 1; i < n_arquivos; i++) {
             freopen(args.arquivos[i], "r", input);
-            le_header(atual, input);
-            le_audio_data(atual, input);
-            concatena(cat, atual);
+            le_header(&atual, input);
+            le_audio_data(&atual, input);
+            concatena(&cat, &atual);
         }
     }
 
     output = arruma_output(args.output);
-
-    escreve_em_out(cat, output);
+    escreve_em_out(&cat, output);
 
     fclose(input);
     fclose(output);

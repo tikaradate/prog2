@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -std=c99 -g
 
 efeitos = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix
-objs =    leitura.o analise_args.o wavaux.o
-headers = leitura.h analise_args.h wavaux.h
+objs =    leitura_escrita.o analise_args.o wavaux.o
+headers = leitura_escrita.h analise_args.h wavaux.h
 
 all: $(efeitos)
 
@@ -16,7 +16,7 @@ wavwide: wavwide.o $(objs)
 wavcat:  wavcat.o $(objs)
 wavmix:  wavmix.o $(objs)
 
-leitura.o:      leitura.c leitura.h
+leitura_escrita.o:      leitura_escrita.c leitura_escrita.h
 analise_args.o: analise_args.c analise_args.h
 wavaux.o:		wavaux.c wavaux.h
 
