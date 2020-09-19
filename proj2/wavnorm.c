@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     aloca_wav_struct(&wav);
 
     input = arruma_input(args.input);
+    trata_abertura_arq(input);
     le_header(wav, input);
     le_audio_data(wav, input);
 

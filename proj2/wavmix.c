@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
     }
 
     input = fopen(args.arquivos[0], "r");
+    trata_abertura_arq(input);
     le_header(mix, input);
     le_audio_data(mix, input);
 
@@ -55,6 +56,7 @@ int main(int argc, char *argv[]) {
 
         for (i = 1; i < n_arquivos; i++) {
             freopen(args.arquivos[i], "r", input);
+            trata_abertura_arq(input);
             le_header(atual, input);
             le_audio_data(atual, input);
             mixagem(mix, atual);

@@ -10,33 +10,36 @@
 static struct argp_option options[] = {
     {"input", 'i', "INPUT", 0, "Lê de INPUT invés de stdin"},
     {"output", 'o', "OUTPUT", 0, "Escreve em OUTPUT invés de stdout"},
-    {"level", 'l', "LEVEL", 0, "Fator de ajuste de alguns efeitos(wavecho, wavvol, wavwide)"},
+    {"level", 'l', "LEVEL", 0,
+     "Fator de ajuste de alguns efeitos(wavecho, wavvol, wavwide)"},
     {"delay", 't', "DELAY", 0, "Delay, em ms, para o wavecho"},
     {0}};
 
 // função que analisa os argumentos
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
-    struct argumentos *arguments = state->input;
+    struct argumentos *args = state->input;
 
     switch (key) {
         case 'i':
-            arguments->input = arg;
+            args->input = arg;
             break;
         case 'o':
-            arguments->output = arg;
+            args->output = arg;
             break;
         case 'l':
-            arguments->level = atof(arg);
+            args->level = atof(arg);
             break;
         case 't':
-            arguments->delay = atof(arg);
+            args->delay = atof(arg);
             break;
         case ARGP_KEY_ARG:
-            // como temos o indice o proximo e queremos o atual, decrescemos state->next
+            // como temos o indice o proximo e queremos o atual, decrescemos
+            // state->next
             state->next--;
-            // o ponteiro de strings arquivos aponta pro comeco dos argumentos sem opcoes,
-            // isto é, os arquivos em wavcat e wavmix
-            arguments->arquivos = &state->argv[state->next];
+            // o ponteiro de strings arquivos aponta para o começo dos
+            // argumentos sem opções, isto é, os arquivos usados em wavcat e
+            // wavmix
+            args->arquivos = &state->argv[state->next];
             // força a finalização da leitura dos argumentos da linha de comando
             state->next = state->argc;
             break;
@@ -51,37 +54,38 @@ static struct argp argp = {options, parse_opt, 0, 0};
 /* fim parte argp.h */
 
 struct argumentos linha_de_comando(int argc, char *argv[]) {
-    struct argumentos arguments;
+    struct argumentos args;
+    char *nome_programa;
 
-    arguments.input = NULL;
-    arguments.output = NULL;
-    if (strcmp(argv[0], "./wavecho") == 0) {
-        arguments.level = LEVEL_ECHO;
-    } else if (strcmp(argv[0], "./wavwide") == 0) {
-        arguments.level = LEVEL_WIDE;
+    nome_programa = argv[0];
+
+    args.input = NULL;
+    args.output = NULL;
+    if (strcmp(nome_programa, "./wavecho") == 0) {
+        args.level = LEVEL_ECHO;
+    } else if (strcmp(nome_programa, "./wavwide") == 0) {
+        args.level = LEVEL_WIDE;
+    } else if (strcmp(nome_programa, "./wavvol") == 0) {
+        args.level = LEVEL_VOL;
     } else {
-        arguments.level = LEVEL_VOL;   
+        args.level = 0;
+    }
+    args.delay = DELAY_ECHO;
+
+    argp_parse(&argp, argc, argv, 0, 0, &args);
+
+    // checa se os argumentos estao dentro do intervalo
+    // se não for o caso, usa o máximo ou mínimo do intervalo
+    if (strcmp(nome_programa, "./wavecho") == 0) {
+        if (args.level > 1) args.level = 1;
+        if (args.level < 0) args.level = 0;
+    } else if (strcmp(nome_programa, "./wavwide") == 0) {
+        if (args.level > 10) args.level = 10;
+        if (args.level < 0) args.level = 0;
+    } else if (strcmp(nome_programa, "./wavvol") == 0) {
+        if (args.level > 10) args.level = 10;
+        if (args.level < 0) args.level = 0;
     }
 
-    arguments.delay = DELAY_ECHO;
-    argp_parse(&argp, argc, argv, 0, 0, &arguments);
-
-    if (strcmp(argv[0], "./wavecho") == 0) {
-        if(arguments.level > 1)  
-            arguments.level = 1;
-        if(arguments.level < 0) 
-            arguments.level = 0;
-    } else if (strcmp(argv[0], "./wavwide") == 0) {
-        if(arguments.level > 10)
-            arguments.level = 10;
-        if(arguments.level < 0)
-            arguments.level = 0;
-    } else if(strcmp(argv[0], "./wavvol") == 0) {
-        if(arguments.level > 10)
-            arguments.level = 10;
-        if(arguments.level < 0)
-            arguments.level = 0;
-    }
-
-    return arguments;
+    return args;
 }

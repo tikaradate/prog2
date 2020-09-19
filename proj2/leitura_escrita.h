@@ -22,4 +22,10 @@ FILE *arruma_output(char *output);
 // como há 2 campos para escrita, a função faz os 2 juntos
 void escreve_em_out(struct wav_file *wav, FILE *output);
 
+// checa se fopen e freopen foram bem sucedidos
+void trata_abertura_arq(FILE *file);
+
+// checa o tipo de erro que aconteceu ao manipular arquivos
+void tipo_erro(int teste, FILE *file);
+
 #endif

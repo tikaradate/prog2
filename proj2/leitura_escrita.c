@@ -3,12 +3,18 @@
 #include <stdlib.h>
 
 void le_header(struct wav_file *wav, FILE *input) {
+    int teste;
     // lê de byte a byte(1) o header de HEADER_SIZE(44)
-    fread(wav, 1, HEADER_SIZE, input);
+    teste = fread(wav, 1, HEADER_SIZE, input);
+    // se o valor de teste difere, algo de errado aconteceu
+    if(teste != HEADER_SIZE)
+        tipo_erro(teste, input);
+    // inicializa a stream de audio em NULL
     wav->audio_data = NULL;
 }
 
 void le_audio_data(struct wav_file *wav, FILE *input) {
+    int teste;
     wav->audio_data = malloc(sizeof(int16_t) * audio_data_tam(wav));
     if(!wav->audio_data){
         perror("leitura de audio_data");
@@ -16,14 +22,17 @@ void le_audio_data(struct wav_file *wav, FILE *input) {
     }
     // pula o cabeçalho para a leitura
     fseek(input, HEADER_SIZE, SEEK_SET);
-    fread(wav->audio_data, 2, wav->data.sub_chunk2_size, input);
+    teste = fread(wav->audio_data, 1, wav->data.sub_chunk2_size, input);
+    // se o valor de teste difere, algo de errado aconteceu
+    if(teste != wav->data.sub_chunk2_size)
+        tipo_erro(teste, input);
 }
 
 void imprime_header_info(struct wav_file *wav) {
     int bytes_sample, samples_per_channel;
 
-    // formato %.4s para imprimir os 4 primeiros caracteres da string, visto que
-    // elas não tem NULL-terminator
+    // formato %.4s para imprimir os 4 primeiros caracteres das strings,
+    // visto que elas não tem NULL-terminator
     printf(
         "riff tag        (4 bytes): \"%.4s\"\n"
         "riff size       (4 bytes): %d\n"
@@ -66,20 +75,58 @@ void imprime_header_info(struct wav_file *wav) {
 
 
 FILE *arruma_input(char *input) {
-    if (input != NULL)
-        return (fopen(input, "r"));
-    else
+    if (input != NULL){
+        FILE *ret = fopen(input, "r");
+        if(!ret){
+            perror("Erro ao abrir input:");
+            exit(1);
+        }
+        return ret;
+    } else {
         return (stdin);
+    }
 }
 
 FILE *arruma_output(char *output) {
-    if (output != NULL)
-        return (fopen(output, "w"));
-    else
+    if (output != NULL){
+        FILE *ret = fopen(output, "w");
+        if(!ret){
+            perror("Erro ao abrir input:");
+            exit(1);
+        }
+        return ret;
+    } else {
         return (stdout);
+    }
 }
 
 void escreve_em_out(struct wav_file *wav, FILE *output) {
-    fwrite(wav, 1, HEADER_SIZE, output);
-    fwrite(wav->audio_data, 1, wav->data.sub_chunk2_size, output);
+    int teste;
+
+    teste = fwrite(wav, 1, HEADER_SIZE, output);
+    if(teste != HEADER_SIZE)
+        tipo_erro(teste, output);
+
+    teste = fwrite(wav->audio_data, 1, wav->data.sub_chunk2_size, output);
+    if(teste != wav->data.sub_chunk2_size)
+        tipo_erro(teste, output);
+}
+
+void trata_abertura_arq(FILE *file){
+    if(file == NULL){
+        perror("Erro na abertura de arquivo:");
+        exit(1);
+    }
+}
+
+// como temos o tamanho no cabeçalho e fread retorna o numero de itens lidos
+// se for diferente o cabeçalho esta errado/faltam dados na stream de audio ou
+// fread teve um erro
+void tipo_erro(int teste, FILE *file) {
+    fprintf(stderr, "Erro ao manipular stream de audio do arquivo:\n");
+    if(feof(file))
+        fprintf(stderr, "\tDados de audio faltando\n");
+    else
+        perror("\tFuncao de leitura/escrita teve um erro inesperado");
+    exit(1);
 }

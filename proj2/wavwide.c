@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     aloca_wav_struct(&wav);
 
     input = arruma_input(args.input);
-    // talvez checar o numero de canais?
+    trata_abertura_arq(input);
     le_header(wav, input);
     if(wav->fmt.num_channels != 2){
         fprintf(stderr, "ERRO: áudio não é do formato estéreo(2 canais)\n");
