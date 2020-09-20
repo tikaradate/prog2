@@ -1,3 +1,4 @@
+// GRR20190367 Vinicius Tikara Venturi Date
 #include <stdlib.h>
 
 #include "analise_args.h"
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
 
     output = arruma_output(args.output);
     escreve_em_out(wav, output);
-    
+
     libera_wav(wav);
     fclose(input);
     fclose(output);

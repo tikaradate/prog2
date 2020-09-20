@@ -1,3 +1,4 @@
+// GRR20190367 Vinicius Tikara Venturi Date
 #include <inttypes.h>
 #include <stdlib.h>
 
@@ -16,7 +17,8 @@ int main(int argc, char *argv[]) {
     input = arruma_input(args.input);
     trata_abertura_arq(input);
     le_header(wav, input);
-    if(wav->fmt.num_channels != 2){
+    // checa se input estereo utilizando o cabecalho
+    if (wav->fmt.num_channels != 2) {
         fprintf(stderr, "ERRO: áudio não é do formato estéreo(2 canais)\n");
         libera_wav(wav);
         exit(1);
@@ -24,7 +26,7 @@ int main(int argc, char *argv[]) {
     le_audio_data(wav, input);
 
     tam = audio_data_tam(wav);
-    // fórmula do wavwide aplicada
+    // fórmula do wavwide aplicada em cada par de samples
     for (i = 0; i < tam; i += 2) {
         diff = wav->audio_data[i + 1] - wav->audio_data[i];
         wav->audio_data[i + 1] =
@@ -34,7 +36,6 @@ int main(int argc, char *argv[]) {
     }
 
     output = arruma_output(args.output);
-
     escreve_em_out(wav, output);
 
     libera_wav(wav);

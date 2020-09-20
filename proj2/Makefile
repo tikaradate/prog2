@@ -1,3 +1,4 @@
+# GRR20190367 Vinicius Tikara Venturi Date
 CC = gcc
 CFLAGS = -Wall -std=c99 -g
 
@@ -16,9 +17,9 @@ wavwide: wavwide.o $(objs)
 wavcat:  wavcat.o $(objs)
 wavmix:  wavmix.o $(objs)
 
-leitura_escrita.o:      leitura_escrita.c leitura_escrita.h
-analise_args.o: analise_args.c analise_args.h
-wavaux.o:		wavaux.c wavaux.h
+leitura_escrita.o: leitura_escrita.c leitura_escrita.h
+analise_args.o:    analise_args.c analise_args.h
+wavaux.o:		   wavaux.c wavaux.h
 
 clean:
 	rm -f *.o

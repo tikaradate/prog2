@@ -1,3 +1,4 @@
+// GRR20190367 Vinicius Tikara Venturi Date
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +16,8 @@ int main(int argc, char *argv[]) {
 
     input = arruma_input(args.input);
     trata_abertura_arq(input);
+    // le apenas o cabecalho, 
+    // a stream de audio nao importa neste caso
     le_header(wav, input);
     imprime_header_info(wav);
 
